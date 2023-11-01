@@ -25,6 +25,7 @@ const getAllDogs = async () => {
     },
   });
   const dogs = await dbDogs.map((dog) => {
+    const temperaments = dog.Temperaments.map((t) => t.name).join(", ");
     return {
       id: dog.id,
       name: dog.name,
@@ -39,7 +40,8 @@ const getAllDogs = async () => {
       },
       yearsOfLife: dog.yearsOfLife,
       origin: dog.origin,
-      Temperaments: dog.map((e) => e.nombre).toString(),
+      Temperaments: temperaments,
+      source: "database",
     };
   });
 
@@ -64,6 +66,7 @@ const getAllDogs = async () => {
           yearsOfLife: dog.life_span,
           origin: dog.origin,
           Temperaments: dog.temperament,
+          source: "api",
         };
       });
       return mappedDogs;
@@ -77,6 +80,8 @@ const getAllDogs = async () => {
 };
 const getAllTemperament = async () => {
   try {
+    const dbTemperaments = await Temperament.findAll();
+
     const response = await axios.get(URL_API);
     const data = response.data;
     const temperaments = data
@@ -86,9 +91,9 @@ const getAllTemperament = async () => {
 
     // Guarda los temperamentos en la base de datos (usando el modelo Temperament)
     for (const temperament of temperaments) {
-      await Temperament.findOrCreate({ where: { Nombre: temperament } });
+      await Temperament.findOrCreate({ where: { name: temperament } });
     }
-    return temperaments;
+    return dbTemperaments
   } catch (error) {
     throw error;
   }

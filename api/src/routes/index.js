@@ -3,10 +3,8 @@ const {dogsControllers, TemperamentControllers} = require("../controllers/contro
 const dogRouter = Router();
 
 
-// Configurar los routers
-// Ejemplo: router.use('/auth', authRouter);
-dogRouter.get('/dogs', dogsControllers.printDogs);
-dogRouter.get('/dogs/:idBreed', dogsControllers.printDogsByBreed);
+dogRouter.get('/dogs', dogsControllers.printDogs); // todos los dogs y filtra por nombre de raza
+dogRouter.get('/dogs/:idBreed', dogsControllers.printDogsById);
 dogRouter.get('/temperament',TemperamentControllers.printTemperament);
 dogRouter.post('/dog', dogsControllers.addDogs);
 
