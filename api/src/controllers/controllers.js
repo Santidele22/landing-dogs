@@ -1,5 +1,5 @@
 const { getAllDogs, getAllTemperament } = require("../services/dogsServices");
-const { Dog, Temperament} = require("../db.js");
+const { Dog, Temperament } = require("../db.js");
 
 const dogSchema = require("../utils//validation.js");
 
@@ -37,43 +37,47 @@ class dogsControllers {
   static async addDogs(req, res) {
     try {
       const newDog = req.body;
-      // Valida los datos del nuevo perro usando el esquema de validación
-      const { error } = dogSchema.validate(newDog);
+      const { error } = dogSchema.validate({
+        name: newDog.name,
+        image: newDog.image,
+        height: newDog.height,
+        weight: newDog.weight,
+        yearsOfLife: newDog.yearsOfLife,
+        origin: newDog.origin,
+      });
+
       if (error) {
         return res.status(400).json({ error: error.details });
       }
-  
-      // Crea el nuevo perro
+
       const createdDog = await Dog.create(newDog);
-  
-      // Verifica si se proporcionaron temperamentos y si son un array
-      if (newDog.temperaments && Array.isArray(newDog.temperaments)) {
-        // Itera sobre los temperamentos proporcionados
-        for (const temp of newDog.temperaments) {
-          // Busca el temperamento en la base de datos
-          const temperament = await Temperament.findOne({
-            where: { name: temp },
+
+      // Verifica si se proporcionaron temperamentos y si son un arreglo de objetos
+      const temperamentos = Array.isArray(newDog.Temperaments)
+        ? newDog.Temperaments
+        : [newDog.Temperaments];
+      console.log(temperamentos);
+      for (const tempObject of temperamentos) {
+        if (tempObject.name) {
+          const [temperament, created] = await Temperament.findOrCreate({
+            where: { name: tempObject.name },
           });
-          if (temperament) {
-            // Asocia el temperamento al perro recién creado
-            await createdDog.addTemperament(temperament);
-          } else {
-            // Si el temperamento no se encuentra, crea un nuevo registro en la base de datos
-            const newTemperament = await Temperament.create({
-              name: temp,
-            });
-          
-            // Luego, asocia el nuevo temperamento al perro recién creado
-            await createdDog.addTemperament(newTemperament);
-          }
+          // Asocia el temperamento al perro recién creado
+          await createdDog.addTemperament(temperament);
         }
       }
-      return res.status(201).json(createdDog.toJSON());
+     
+    const associatedTemperaments = await createdDog.getTemperaments();
+    const dogWithTemperaments = createdDog.toJSON();
+    dogWithTemperaments.Temperaments = associatedTemperaments;
+
+    return res.status(201).json(dogWithTemperaments);
     } catch (error) {
       return res.status(500).json({ Error: error.message });
     }
   }
-}  
+}
+
 class TemperamentControllers {
   static async printTemperament(req, res) {
     try {

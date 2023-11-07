@@ -4,12 +4,16 @@ import {
   FILTER_BY_BREED,
   FILTER_BY_TEMPERAMENT,
   ORDER,
+  GET_DOG,
+  CREATE_DOG,
 } from "../actions/actions-types.js";
+
 
 const initialState = {
   dogs: [],
   dogsFiltered: [],
   temperaments: [],
+  dogDetail: null,
 };
 
 const reducer = (state = initialState, action) => {
@@ -24,6 +28,12 @@ const reducer = (state = initialState, action) => {
         ...state,
         temperaments: action.payload,
       };
+    case GET_DOG:
+      return {
+        ...state,
+        dogs: action.payload,
+        dogDetail: action.payload,
+      };
     case FILTER_BY_BREED:
       const filteredByBreed = [...state.dogs].filter(
         (dog) => dog.name === action.payload
@@ -32,27 +42,25 @@ const reducer = (state = initialState, action) => {
         ...state,
         dogsFiltered: filteredByBreed,
       };
-      case FILTER_BY_TEMPERAMENT:
-        const selectedTemperament = action.payload;
-      
-        // Filtra los perros que tienen el temperamento seleccionado
-        const filteredByTemp = state.dogs.filter((dog) => {
-          // Comprueba si el temperamento está en la lista de temperamentos del perro
-          if (Array.isArray(dog.Temperaments)) {
-            return dog.Temperaments.includes(selectedTemperament);
-          } else if (typeof dog.Temperaments === "string") {
-            return dog.Temperaments.includes(selectedTemperament);
-          }
-          return false;
-        });
-      
-        return {
-          ...state,
-          dogsFiltered: filteredByTemp,
-        };
-      
 
-      
+    case FILTER_BY_TEMPERAMENT:
+      const selectedTemperament = action.payload;
+      const filteredByTemp = state.dogs.filter((dog) => {
+        if (Array.isArray(dog.Temperaments)) {
+          const temperaments = dog.Temperaments.map(
+            (temperament) => temperament.name
+          );
+          return temperaments.includes(selectedTemperament);
+        } else if (typeof dog.Temperaments === "string") {
+          return dog.Temperaments.includes(selectedTemperament);
+        }
+        return false;
+      });
+
+      return {
+        ...state,
+        dogsFiltered: filteredByTemp,
+      };
 
     case ORDER:
       let weightDog = !state.dogsFiltered.length
@@ -83,6 +91,11 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         filteredDogs: weightDog,
+      };
+    case CREATE_DOG:
+      return {
+        ...state,
+        dogs: [...state.dogs, action.payload],
       };
 
     default:

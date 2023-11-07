@@ -12,7 +12,6 @@ const dogScheme = Joi.object({
   }).required(),
   yearsOfLife: Joi.string().required(),
   origin: Joi.string().required(),
-  temperaments: Joi.array().items(Joi.string()),
 });
 
 module.exports = dogScheme;

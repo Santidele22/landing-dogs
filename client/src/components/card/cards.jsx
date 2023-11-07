@@ -1,6 +1,6 @@
 import Card from "./card";
 
- export default function Cards({dogs,dogsPerPage,currentPage}) {
+ export default function Cards({dogs,dogsPerPage,currentPage,id}) {
     const indexOfLastDog = (currentPage + 1) * dogsPerPage;
     const indexOfFirstDog = indexOfLastDog - dogsPerPage;
     const dogsToShow = dogs.slice(indexOfFirstDog, indexOfLastDog);
@@ -9,6 +9,7 @@ import Card from "./card";
         {dogsToShow?.map((dog) => (
           <Card
             key={dog.id}
+            id={dog.id}
             name={dog.name}
             image={dog.image}
             origin={dog.origin}

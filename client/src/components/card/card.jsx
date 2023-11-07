@@ -17,7 +17,7 @@ export default function Card({ id, name, image, origin }) {
         </CardSection>
       </CardMain>
       <CardFooter>
-        <StyledLink to="/details">More details</StyledLink>
+        <StyledLink to={`/details/${id}`}>More details</StyledLink>
       </CardFooter>
     </CardArticle>
   );

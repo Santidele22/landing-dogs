@@ -7,7 +7,7 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
   }
   body{
-    background-color: ${props => props.theme.colors.stone50};
+    background-color: ${(props) => props.theme.colors.stone50};
   }
   a{
     text-decoration: none;
@@ -19,13 +19,19 @@ const GlobalStyles = createGlobalStyle`
     color: ${(props) => props.theme.colors.stone950};
     font-size: ${(props) => props.theme.fontSizes.bigTitle};
   }
+  h2{
+    font-size: ${(props) => props.theme.fontSizes.title};
+  }
+  h3{
+    font-size: ${(props) => props.theme.fontSizes.subtitle};
+  }
   p{
     color:${(props) => props.theme.colors.stone900};
     font-size: ${(props) => props.theme.fontSizes.text};
     line-height: 1.2;
   }
   span{
-color:${(props) => props.theme.colors.stone50};
+    color:${(props) => props.theme.colors.stone50};
     font-size: ${(props) => props.theme.fontSizes.text};
   }
  button{
@@ -53,6 +59,16 @@ color:${(props) => props.theme.colors.stone50};
   cursor: pointer;
   margin: 0.5rem 0;
   }
+  img{
+    display: block;
+    width: 100%;
+height: 100%;
+  }
+  li{
+    color:${(props) => props.theme.colors.stone50};
+    list-style: none;
+  }
+ 
 `;
 
 export default GlobalStyles;
