@@ -4,6 +4,7 @@ import {
   FILTER_BY_BREED,
   FILTER_BY_TEMPERAMENT,
   ORDER,
+  ORDER_ALPH,
   GET_DOG,
   CREATE_DOG,
 } from "../actions/actions-types.js";
@@ -13,7 +14,7 @@ const initialState = {
   dogs: [],
   dogsFiltered: [],
   temperaments: [],
-  dogDetail: null,
+  dogDetail: [],
 };
 
 const reducer = (state = initialState, action) => {
@@ -40,33 +41,18 @@ const reducer = (state = initialState, action) => {
       );
       return {
         ...state,
-        dogsFiltered: filteredByBreed,
+        dogs: filteredByBreed,
       };
 
     case FILTER_BY_TEMPERAMENT:
       const selectedTemperament = action.payload;
-      const filteredByTemp = state.dogs.filter((dog) => {
-        if (Array.isArray(dog.Temperaments)) {
-          const temperaments = dog.Temperaments.map(
-            (temperament) => temperament.name
-          );
-          return temperaments.includes(selectedTemperament);
-        } else if (typeof dog.Temperaments === "string") {
-          return dog.Temperaments.includes(selectedTemperament);
-        }
-        return false;
-      });
-
       return {
         ...state,
-        dogsFiltered: filteredByTemp,
+        dogs: selectedTemperament,
       };
-
     case ORDER:
-      let weightDog = !state.dogsFiltered.length
-        ? state.dogs
-        : state.dogsFiltered;
-
+      let weightDog = state.dogs
+      
       const parseRange = (dog) => {
         const imperialRange = dog.weight.imperial;
         const [min, max] = imperialRange.split(" - ").map(Number);
@@ -90,7 +76,12 @@ const reducer = (state = initialState, action) => {
 
       return {
         ...state,
-        filteredDogs: weightDog,
+        dogs: weightDog,
+      };
+      case ORDER_ALPH: 
+      return {
+        ...state,
+        dogs: action.payload,
       };
     case CREATE_DOG:
       return {

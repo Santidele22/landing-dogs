@@ -56,10 +56,9 @@ class dogsControllers {
       const temperamentos = Array.isArray(newDog.Temperaments)
         ? newDog.Temperaments
         : [newDog.Temperaments];
-      console.log(temperamentos);
       for (const tempObject of temperamentos) {
         if (tempObject.name) {
-          const [temperament, created] = await Temperament.findOrCreate({
+          const [temperament] = await Temperament.findOrCreate({
             where: { name: tempObject.name },
           });
           // Asocia el temperamento al perro recién creado

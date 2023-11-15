@@ -5,8 +5,10 @@ import { useParams } from "react-router-dom";
 import { getDogById } from "../../redux/actions/actions";
 export default function DetailsRendering() {
   const { id } = useParams();
+console.log(id)
   const { dogDetail } = useSelector((state) => state);
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(getDogById(id));
   }, [dispatch]);

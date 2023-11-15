@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   filterByTemp,
   filterByBreed,
   orderDogs,
+  orderDogsAlph,
   getAllDogs,
   getTemperaments,
 } from "../../redux/actions/actions";
@@ -27,21 +28,36 @@ export default function () {
   useEffect(() => {
     dispatch(getAllDogs());
     dispatch(getTemperaments());
-  }, [dispatch]);
+  }, []);
 
-  const { temperaments, dogs, dogsFiltered, dogDetail } = useSelector(
-    (state) => state
-  );
-
-  const showDogs = dogsFiltered.length < 1 ? dogs : dogsFiltered;
+  const { temperaments, dogs } = useSelector((state) => state);
 
   function handleChange(e) {
     if (e.target.name === "filterByTemperament") {
       dispatch(filterByTemp(e.target.value));
-    } else if (e.target.name === "filterByBreed") {
-      dispatch(filterByBreed(e.target.value));
-    } else if (e.target.name === "order") {
+    }
+    if (e.target.name === "filterByBreed") {
+      if (e.target.value !== null) {
+        dispatch(filterByBreed(e.target.value));
+      }
+      dispatch(getAllDogs());
+    }
+    if (e.target.name === "order") {
       dispatch(orderDogs(e.target.value));
+    }
+    if (e.target.name === "alph") {
+      const sortedDogs = [...dogs];
+      if (e.target.value === "az") {
+        sortedDogs.sort((a, b) =>
+          a.name && b.name ? a.name.localeCompare(b.name) : 0
+        );
+        dispatch(orderDogsAlph(sortedDogs));
+      } else if (e.target.value === "za") {
+        sortedDogs.sort((a, b) =>
+          b.name && a.name ? b.name.localeCompare(a.name) : 0
+        );
+        dispatch(orderDogsAlph(sortedDogs));
+      }
     }
   }
 
@@ -50,7 +66,6 @@ export default function () {
     setCurrentPage(data.selected);
   };
   const pageCount = Math.ceil(dogs.length / dogsPerPage);
-  console.log(dogs)
 
   return (
     <>
@@ -79,7 +94,7 @@ export default function () {
               <option key="Breed" value="">
                 Breeds
               </option>
-              {showDogs?.map((e) => (
+              {dogs?.map((e) => (
                 <option key={e.id} value={e.name}>
                   {e.name}
                 </option>
@@ -90,13 +105,24 @@ export default function () {
             <h3>Order</h3>
             <select name="order" onChange={handleChange}>
               <option key="Order" value="">
-                Sort
+                Weight
               </option>
               <option key="Asc" value="Ascending">
                 Ascending
               </option>
               <option key="Desc" value="Descending">
                 Descending
+              </option>
+            </select>
+            <select name="alph" onChange={handleChange}>
+              <option key="alph" value="">
+                Name
+              </option>
+              <option key="az" value="az">
+                A-Z
+              </option>
+              <option key="za" value="za">
+                Z-A
               </option>
             </select>
           </SectionAside>
@@ -106,7 +132,7 @@ export default function () {
             <Text>Loading...</Text>
           ) : (
             <Cards
-              dogs={showDogs}
+              dogs={dogs}
               currentPage={currentPage}
               dogsPerPage={dogsPerPage}
             />

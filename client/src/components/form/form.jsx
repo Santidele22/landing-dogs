@@ -111,6 +111,8 @@ export default function Form() {
         Temperaments: [],
       })
       alert('Dog Created!!!')
+    }else{
+      alert('Faltan datos a completar! Por favor llene todo el formulario antes de crear el perro')
     }
 
   };

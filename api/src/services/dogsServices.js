@@ -3,6 +3,7 @@ const axios = require("axios");
 const { Dog, Temperament } = require("../db.js");
 const { API_KEY } = process.env;
 const URL_API = `https://api.thedogapi.com/v1/breeds?api_key=${API_KEY}`;
+
 const getAllDogs = async () => {
   try {
     const dbDogs = await Dog.findAll({
@@ -91,11 +92,11 @@ const getAllTemperament = async () => {
     const response = await axios.get(URL_API);
     const data = response.data;
     const temperaments = data
-      .filter((dog) => dog.temperament)
-      .map((dog) => dog.temperament.split(","))
-      .flat(); // aplana la matriz ejemplo: pasa de esto [1, [2, 3], [4, 5, [6, 7]]]; a esto [1, 2, 3, 4, 5, 6, 7]
-
-    // Guarda los temperamentos en la base de datos (usando el modelo Temperament)
+    .filter((dog) => dog.temperament)
+    .map((dog) => dog.temperament.split(","))
+    .flat() // aplana la matriz
+    .map((temperament) => temperament.trim());
+    // Guarda los temperamentos en la base de datos
     for (const temperament of temperaments) {
       await Temperament.findOrCreate({ where: { name: temperament } });
     }
